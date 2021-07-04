@@ -1,0 +1,33 @@
+version: "3"
+
+# More info at https://github.com/pi-hole/docker-pi-hole/ and https://docs.pi-hole.net/
+services:
+  pihole:
+    container_name: pihole
+    image: pihole/pihole:latest
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+      - "67:67/udp"
+      - "80:80/tcp"
+      - "443:443/tcp"
+    environment:
+      TZ: 'Europe/Madrid'
+      # WEBPASSWORD: 'set a secure password here or it will be random'
+      # WEBPASSWORD: "${PIHOLE_PASSWORD}"
+    volumes:
+      - './etc-pihole/:/etc/pihole/'
+      - './etc-dnsmasq.d/:/etc/dnsmasq.d/'
+    cap_add:
+      - NET_ADMIN
+    restart: always
+    # If you want Pihole to get an static IP do not comment next lines
+    # Remember in this case the external network should be ready to accept it
+    networks:
+      containers:
+        ipv4_address: 172.22.0.2
+
+networks:
+  default:
+    external:
+      name: primary
