@@ -1,0 +1,77 @@
+version: '2'
+
+services:
+  nextCloudPostgres:
+    image: postgres
+    restart: always
+    container_name: nextCloudPostgres
+    expose:
+      - "5432"
+    environment:
+      - POSTGRES_DB=nextcloud
+      - POSTGRES_USER=nextcloud
+      - POSTGRES_PASSWORD=dbpass
+    volumes:
+      - nextCloudDb:/var/lib/postgresql/data
+
+  nextCloudRedis:
+    image: redis
+    restart: always
+    container_name: nextCloudRedis
+    command: redis-server --appendonly yes --requirepass redispass
+    volumes:
+      - nextCloudRedisData:/data
+      - nextCloudRedisConf:/usr/local/etc/redis
+
+  nextcloud:
+    image: nextcloud
+    container_name: nextcloud
+    restart: always
+    environment:
+      - POSTGRES_DB=nextcloud
+      - POSTGRES_USER=nextcloud
+      - POSTGRES_PASSWORD=dbpass
+      - POSTGRES_HOST=nextCloudPostgres
+      - REDIS_HOST=nextCloudRedis
+      - REDIS_HOST_PASSWORD=redispass
+      - SMTP_HOST=smtp.mydomain.com # Update with the correct path
+      - SMTP_PORT=587
+      - SMTP_NAME=cloud@mydomain.com # Update with the correct path
+      - SMTP_PASSWORD=smtppass
+      - MAIL_FROM_ADDRESS=cloud@mydomain.com # Update with the correct path
+      - MAIL_DOMAIN=http://cloud.mydomain.com # Update with the correct path
+      - NEXTCLOUD_TRUSTED_DOMAINS=cloud.mydomain.com # Update with the correct path
+    expose:
+      - "80"
+    depends_on:
+      - nextCloudPostgres
+      - nextCloudRedis
+    volumes:
+      - nextcloud:/var/www/html
+
+volumes:
+  nextcloud:
+    driver_opts:
+      type: none
+      device: /home/user/Docker/nextcloud/data # Update with the correct path
+      o: bind
+  nextCloudDb:
+    driver_opts:
+      type: none
+      device: /home/user/Docker/nextcloud/db # Update with the correct path
+      o: bind
+  nextCloudRedisData:
+    driver_opts:
+      type: none
+      device: /home/user/Docker/nextcloud/redis/data # Update with the correct path
+      o: bind
+  nextCloudRedisConf:
+    driver_opts:
+      type: none
+      device: /home/user/Docker/nextcloud/redis/conf # Update with the correct path
+      o: bind
+
+networks:
+  default:
+    external:
+      name: primary

@@ -2,6 +2,8 @@ version: "3"
 
 services:
 
+# To add some security all the services can be exposed internally and proxied by a reverse proxy service
+# This network will isolate the environment for protection
 networks:
   primary:
     driver: bridge
