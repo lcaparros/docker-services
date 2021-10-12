@@ -1,0 +1,18 @@
+version: '2'
+
+services:
+  glances:
+    image: nicolargo/glances
+    restart: always
+    container_name: glances
+    environment:
+      - GLANCES_OPT=-w
+    expose:
+      - '61208'
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+networks:
+  default:
+    external:
+      name: primary

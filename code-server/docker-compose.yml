@@ -1,0 +1,21 @@
+version: "2.1"
+services:
+  code-server:
+    image: lscr.io/linuxserver/code-server
+    container_name: code-server
+    environment:
+      - PUID=1000 # Change by the real user ID if file permissions are required
+      - PGID=1000 # Change by the real group ID if file permissions are required
+      - TZ=Europe/London
+      - PASSWORD=${CODE_SERVER_WEB_PASS}
+      - SUDO_PASSWORD=${CODE_SERVER_SUDO_PASS}
+    volumes:
+      - ${CODE_SERVER_CONFIG_DIR}:/config
+    expose:
+      - "8443"
+    restart: unless-stopped
+
+networks:
+  default:
+    external:
+      name: primary

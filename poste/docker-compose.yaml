@@ -1,0 +1,28 @@
+version: '3.4'
+services:
+  poste:
+    image: analogic/poste.io
+    restart: always
+    container_name: poste
+    # If a reverse proxy is being used, the security can be improved by exposing ports below instead of forwarding
+    ports:
+      - "25:25"
+      - "110:110"
+      - "143:143"
+      - "587:587"
+      - "993:993"
+      - "995:995"
+      - "4190:4190"
+    # If you use a proxy expose ports 80 and 443. Otherwise include them into the ports section
+    expose:
+      - 80
+      - 443
+    environment:
+      - HTTPS=OFF
+    volumes:
+      - /root/mail-data:/data
+
+networks:
+  default:
+    external:
+      name: primary
