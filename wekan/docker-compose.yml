@@ -1,0 +1,114 @@
+version: '2'
+
+# Note: Do not add single quotes '' to variables. Having spaces still works without quotes where required.
+#---------------------------------------------------------------------------------------------------------
+# ==== CREATING USERS AND LOGGING IN TO WEKAN ====
+# https://github.com/wekan/wekan/wiki/Adding-users
+#---------------------------------------------------------------------------------------------------------
+# ==== FORGOT PASSWORD ====
+# https://github.com/wekan/wekan/wiki/Forgot-Password
+#---------------------------------------------------------------------------------------------------------
+# ==== Upgrading Wekan to new version =====
+# NOTE: MongoDB has changed from 3.x to 4.x, in that case you need backup/restore with --noIndexRestore
+#       see https://github.com/wekan/wekan/wiki/Backup
+# 1) Stop Wekan:
+#      docker-compose stop
+# 2) Download new version:
+#      docker-compose pull wekan
+# 3) If you have more networks for VPN etc as described at bottom of
+#    this config, download for them too:
+#      docker-compose pull wekan2
+# 4) Start Wekan:
+#      docker-compose start
+# ----------------------------------------------------------------------------------
+# ===== INSIDE DOCKER CONTAINERS, AND BACKUP/RESTORE ====
+# 1) Going inside containers:
+#    a) Wekan app, does not contain data
+#         docker exec -it wekan-app bash
+#    b) MongoDB, contains all data
+#         docker exec -it wekan-db bash
+# 2) Copying database to outside of container:
+#      docker exec -it wekan-db bash
+#      cd /data
+#      mongodump
+#      exit
+#      docker cp wekan-db:/data/dump .
+# 3) Restoring database
+#      # 1) Stop wekan
+#             docker stop wekan-app
+#      # 2) Go inside database container
+#             docker exec -it wekan-db bash
+#      # 3) and data directory
+#             cd /data
+#      # 4) Remove previos dump
+#             rm -rf dump
+#      # 5) Exit db container
+#             exit
+#      # 6) Copy dump to inside docker container
+#             docker cp dump wekan-db:/data/
+#      # 7) Go inside database container
+#             docker exec -it wekan-db bash
+#      # 8) and data directory
+#             cd /data
+#      # 9) Restore
+#             mongorestore --drop
+#      # 10) Exit db container
+#             exit
+#      # 11) Start wekan
+#             docker start wekan-app
+#-------------------------------------------------------------------------
+
+services:
+
+  wekandb:
+    image: mongo:4.2
+    container_name: wekan-db
+    restart: always
+    command: mongod --oplogSize 128
+    expose:
+      - 27017
+    volumes:
+      - wekan-db:/data/db
+      - wekan-db-dump:/dump
+
+  wekan:
+    image: wekanteam/wekan
+    container_name: wekan-app
+    restart: always
+    expose:
+      - 8080
+    environment:
+      - MONGO_URL=mongodb://wekandb:27017/wekan
+      - ROOT_URL=https://projects.mydomain.com
+      - MAIL_URL=smtp://projects%40mydomain.com:AkTXsz%2Fq12xj%40@smtp.mydomain.com:25/?ignoreTLS=true&tls={rejectUnauthorized:false}
+      - MAIL_FROM=Cards Notifications <projects@mydomain.com>
+      - WITH_API=true
+      - ACCOUNTS_LOCKOUT_KNOWN_USERS_FAILURES_BEFORE=5
+      - ACCOUNTS_LOCKOUT_KNOWN_USERS_PERIOD=30
+      - ACCOUNTS_LOCKOUT_KNOWN_USERS_FAILURE_WINDOW=15
+      - ACCOUNTS_LOCKOUT_UNKNOWN_USERS_FAILURES_BERORE=3
+      - ACCOUNTS_LOCKOUT_UNKNOWN_USERS_LOCKOUT_PERIOD=60
+      - ACCOUNTS_LOCKOUT_UNKNOWN_USERS_FAILURE_WINDOW=15
+      - RICHER_CARD_COMMENT_EDITOR=false
+      - CARD_OPENED_WEBHOOK_ENABLED=false
+      - BIGEVENTS_PATTERN=NONE
+      - BROWSER_POLICY_ENABLED=true
+    depends_on:
+      - wekandb
+
+volumes:
+  wekan-db:
+    driver_opts:
+        type: none
+        device: /home/user/Docker/wekan/db
+        o: bind
+  wekan-db-dump:
+    driver_opts:
+        type: none
+        device: /home/user/Docker/wekan/dump
+        o: bind
+
+networks:
+  default:
+    external:
+      name: primary
