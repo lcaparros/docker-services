@@ -4,6 +4,8 @@ services:
 
 # To add some security all the services can be exposed internally and proxied by a reverse proxy service
 # This network will isolate the environment for protection
+# This can also be done directly with:
+#     $ docker network create -d bridge primary
 networks:
   primary:
     driver: bridge

@@ -1,6 +1,6 @@
 version: '3'
 services:
-  app:
+  npm:
     image: 'jc21/nginx-proxy-manager:latest'
     container_name: nginx-proxy-manager
     restart: always
@@ -8,12 +8,18 @@ services:
       - '81:81' # After first run, this port can be forwarded by the own nginx-proxy-manager to add more security
       - '80:80'
       - '443:443'
+    environment:
+      DB_MYSQL_HOST: "npm-db"
+      DB_MYSQL_PORT: 3306
+      DB_MYSQL_USER: "npm"
+      DB_MYSQL_PASSWORD: "npm"
+      DB_MYSQL_NAME: "npm"
     volumes:
       - ./config.json:/app/config/production.json
       - ./data:/data
       - ./letsencrypt:/etc/letsencrypt
-  db:
-    image: 'jc21/mariadb-aria:10.4'
+  npm-db:
+    image: 'jc21/mariadb-aria:latest'
     container_name: npm-db
     restart: always
     environment:
