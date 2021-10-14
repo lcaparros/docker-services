@@ -1,0 +1,17 @@
+version: '2'
+
+services:
+  uptime:
+    image: louislam/uptime-kuma:latest
+    restart: unless-stopped
+    container_name: uptime-kuma
+    ports:
+      - "3022:3001"
+    volumes:
+      - ./data:/app/data
+
+networks:
+  default:
+    external:
+      name: primary
+
