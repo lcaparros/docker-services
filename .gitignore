@@ -1,4 +1,2 @@
-calibre-web/config/app.db
-calibre-web/config/calibre-web.log
-calibre-web/config/client_secrets.json
-calibre-web/config/gdrive.db
+calibre-web/config/
+jenkins/jenkins_home/
