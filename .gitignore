@@ -7,3 +7,4 @@ terraform/.aws/
 terraform/.ssh/
 terraform/.terraform/
 terraform/.terraform.lock.hcl
+terraform/compose/docker-compose.yml
