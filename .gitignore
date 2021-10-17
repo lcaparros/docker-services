@@ -1,2 +1,9 @@
 calibre-web/config/
 jenkins/jenkins_home/
+terraform/terraform.tfstate
+terraform/terraform.tfstate.backup
+terraform/.gcloud/
+terraform/.aws/
+terraform/.ssh/
+terraform/.terraform/
+terraform/.terraform.lock.hcl
