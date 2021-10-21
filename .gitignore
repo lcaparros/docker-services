@@ -1,10 +1,17 @@
 calibre-web/config/
 jenkins/jenkins_home/
-terraform/terraform.tfstate
-terraform/terraform.tfstate.backup
+*terraform.tfstate
+*terraform.tfstate.backup
 terraform/.gcloud/
 terraform/.aws/
 terraform/.ssh/
-terraform/.terraform/
-terraform/.terraform.lock.hcl
+*.terraform/
+*.terraform.lock.hcl
 terraform/compose/docker-compose.yml
+
+# Certificates
+*.pub
+*.pem
+
+# Environment
+*.env
