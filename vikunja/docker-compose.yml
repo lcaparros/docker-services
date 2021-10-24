@@ -1,0 +1,76 @@
+version: '3'
+
+services:
+  redis:
+    image: redis
+    container_name: vikunja-redis
+    restart: unless-stopped
+
+  vikunja-db:
+    image: mariadb:10
+    container_name: vikunja-db
+    restart: unless-stopped
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    environment:
+      MYSQL_ROOT_PASSWORD: supersecret
+      MYSQL_USER: vikunja
+      MYSQL_PASSWORD: secret
+      MYSQL_DATABASE: vikunja
+    volumes:
+      - ./db:/var/lib/mysql
+
+  vikunja-api:
+    image: vikunja/api
+    container_name: vikunja-api
+    restart: unless-stopped
+    environment:
+      VIKUNJA_DATABASE_HOST: vikunja-db
+      VIKUNJA_DATABASE_PASSWORD: secret
+      VIKUNJA_DATABASE_TYPE: mysql
+      VIKUNJA_DATABASE_USER: vikunja
+      VIKUNJA_DATABASE_DATABASE: vikunja
+      VIKUNJA_REDIS_ENABLED: 1
+      VIKUNJA_REDIS_HOST: 'redis:6379'
+      VIKUNJA_CACHE_ENABLED: 1
+      VIKUNJA_CACHE_TYPE: redis
+      VIKUNJA_SERVICE_ENABLETASKATTACHMENTS: 1
+      # Remember to set to 0 this variable if you don´t want registration available
+      # But you need it to create the first user
+      VIKUNJA_SERVICE_ENABLEREGISTRATION: 1
+      VIKUNJA_SERVICE_ENABLEEMAILREMINDERS: 1
+      VIKUNJA_MAILER_ENABLED: 1
+      VIKUNJA_MAILER_HOST: smtp.mydomain.com
+      VIKUNJA_MAILER_PORT: 587
+      VIKUNJA_MAILER_USERNAME: tasks@mydomain.com
+      VIKUNJA_MAILER_PASSWORD: c9ngU4oqEJ
+      VIKUNJA_MAILER_FROMEMAIL: tasks@mydomain.com
+    expose:
+      - 3456
+    volumes:
+      - ./files:/app/vikunja/files
+    depends_on:
+      - vikunja-db
+
+  vikunja-fe:
+    image: vikunja/frontend
+    container_name: vikunja-fe
+    restart: unless-stopped
+    expose:
+      - 80
+
+  vikunja-proxy:
+    image: nginx
+    container_name: vikunja-proxy
+    expose:
+      - 80
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - vikunja-api
+      - vikunja-fe
+    restart: unless-stopped
+
+networks:
+  default:
+    external:
+      name: primary
