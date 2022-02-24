@@ -1,0 +1,16 @@
+version: '2'
+
+services:
+  glances:
+    image: pawelmalak/snippet-box
+    restart: unless-stopped
+    container_name: snippet-box
+    expose:
+      - '5000'
+    volumes:
+      - ./data:/app/data
+
+networks:
+  default:
+    external:
+      name: primary
