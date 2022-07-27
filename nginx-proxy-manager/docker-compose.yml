@@ -31,6 +31,16 @@ services:
       - ./data/mysql:/var/lib/mysql
 
 networks:
-  default:
-    external:
-      name: primary
+  primary:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.22.0.0/16
+        # gateway: 172.22.0.1
+
+# If you want to use a different network for the proxy, uncomment the following lines
+# networks:
+#   default:
+#     external:
+#       name: primary

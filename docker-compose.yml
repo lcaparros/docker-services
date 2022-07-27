@@ -1,7 +1,5 @@
 version: "3"
 
-services:
-
 # To add some security all the services can be exposed internally and proxied by a reverse proxy service
 # This network will isolate the environment for protection
 # This can also be done directly with:
@@ -11,6 +9,6 @@ networks:
     driver: bridge
     ipam:
       driver: default
-        config:
-          - subnet: 172.22.0.0/16
-          # gateway: 172.22.0.1
+      config:
+        - subnet: 172.22.0.0/16
+        # gateway: 172.22.0.1
