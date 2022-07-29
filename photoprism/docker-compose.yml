@@ -80,5 +80,5 @@ services:
 #      - "~/.docker/config.json:/config.json" # Optional, for authentication if you have a Docker Hub account
 networks:
   default:
-    external:
-      name: primary
+    name: primary
+    external: true

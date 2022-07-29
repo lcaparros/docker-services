@@ -27,11 +27,10 @@ services:
       DB_USER: wikijs
       DB_PASS: wikijspostgrespass
       DB_NAME: wiki
-    restart: always
     expose:
       - '3000'
 
 networks:
   default:
-    external:
-      name: primary
+    name: primary
+    external: true

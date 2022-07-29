@@ -42,5 +42,5 @@ networks:
 # If you want to use a different network for the proxy, uncomment the following lines
 # networks:
 #   default:
-#     external:
-#       name: primary
+#     name: primary
+#     external: true

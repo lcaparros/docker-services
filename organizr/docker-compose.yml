@@ -15,6 +15,6 @@ services:
     restart: unless-stopped
 
 networks:
-    default:
-      external:
-        name: primary
+  default:
+    name: primary
+    external: true

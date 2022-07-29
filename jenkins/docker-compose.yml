@@ -19,6 +19,6 @@ services:
       # - '50000' # Only if TCP Agent Listener Port is necessary
 
 networks:
-    default:
-      external:
-        name: primary
+  default:
+    name: primary
+    external: true

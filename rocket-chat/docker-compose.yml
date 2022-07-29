@@ -78,5 +78,5 @@ services:
 
 networks:
   default:
-    external:
-      name: primary
+    name: primary
+    external: true
