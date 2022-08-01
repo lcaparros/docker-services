@@ -2,7 +2,7 @@ version: '3'
 services:
   npm:
     image: 'jc21/nginx-proxy-manager:latest'
-    container_name: nginx-proxy-manager
+    container_name: npm
     restart: always
     ports:
       - '81:81' # After first run, this port can be forwarded by the own nginx-proxy-manager to add more security
@@ -18,6 +18,7 @@ services:
       - ./config.json:/app/config/production.json
       - ./data:/data
       - ./letsencrypt:/etc/letsencrypt
+
   npm-db:
     image: 'jc21/mariadb-aria:latest'
     container_name: npm-db
@@ -31,16 +32,18 @@ services:
       - ./data/mysql:/var/lib/mysql
 
 networks:
-  primary:
-    driver: bridge
-    ipam:
-      driver: default
-      config:
-        - subnet: 172.22.0.0/16
-        # gateway: 172.22.0.1
+  default:
+    name: primary
+    external: true
 
-# If you want to use a different network for the proxy, uncomment the following lines
+# If you want to create the network for the proxy, uncomment the following lines
+# Otherwise you can create it manually with the following command:
+#     docker network create --driver=bridge --subnet=172.22.0.0/16 primary
 # networks:
-#   default:
-#     name: primary
-#     external: true
+#   primary:
+#     driver: bridge
+#     ipam:
+#       driver: default
+#       config:
+#         - subnet: 172.22.0.0/16
+#         # gateway: 172.22.0.1
