@@ -15,10 +15,10 @@ services:
       DB_MYSQL_PASSWORD: "npm"
       DB_MYSQL_NAME: "npm"
     volumes:
-      - ./config.json:/app/config/production.json
+      - ./config:/app/config
       - ./data:/data
       - ./letsencrypt:/etc/letsencrypt
-
+        
   npm-db:
     image: 'jc21/mariadb-aria:latest'
     container_name: npm-db
