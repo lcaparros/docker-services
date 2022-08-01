@@ -30,14 +30,31 @@ On the other hand, in the client it is necessary to install [grafana client dock
 docker plugin install grafana/loki-docker-driver:latest --alias loki --grant-all-permissions
 ```
 
-Then `/etc/docker/daemon.json` (if not exists yet must be created) must contain:
+Then it is possible to modify any service logging option insided a docker-compose file as in this example below:
+
+```
+version: "3"
+services:
+  grafana:
+    image: grafana/grafana
+    logging:
+      driver: loki
+      options:
+        loki-url: http://host.docker.internal:3100/loki/api/v1/push
+        loki-batch-size: 400
+    ports:
+      - "3000:3000"
+```
+
+Otherwise, the Loki logging driver can be the default for all containers changing `/etc/docker/daemon.json` (if not exists yet must be created) making it include:
 
 ```
 {
   "log-driver": "loki",
   "log-opts": {
     "loki-url": "https://loki.3100/loki/api/v1/push",
-    "loki-batch-size": "400"
+    "loki-batch-size": "400",
+    "no-file": "true"
   }
 }
 ```
