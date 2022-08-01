@@ -1,0 +1,38 @@
+version: "3"
+
+services:
+  loki:
+    image: grafana/loki:2.6.1
+    container_name: loki
+    restart: unless-stopped
+    volumes:
+      - ./loki:/etc/loki
+    expose:
+      - "3100"
+    command: -config.file=/etc/loki/loki-config.yaml
+
+  promtail:
+    image: grafana/promtail:2.6.1
+    container_name: promtail
+    restart: unless-stopped
+    volumes:
+      - /var/log:/var/log
+      - ./promtail:/etc/promtail
+    expose:
+      - "1514"
+    command: -config.file=/etc/promtail/promtail-config.yaml
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    restart: unless-stopped
+    user: "1000"
+    volumes:
+      - ./grafana:/var/lib/grafana
+    expose:
+      - "3000"
+
+networks:
+  default:
+    name: primary
+    external: true
